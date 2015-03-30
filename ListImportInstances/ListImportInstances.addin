@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+    <Text>Command ListImportInstances</Text>
+    <Description>Some description for ListImportInstances</Description>
+    <Assembly>ListImportInstances.dll</Assembly>
+    <FullClassName>ListImportInstances.Command</FullClassName>
+    <ClientId>9ed66817-1037-4791-86e4-cf07b522eb79</ClientId>
+    <VendorId>TBC_</VendorId>
+    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>
