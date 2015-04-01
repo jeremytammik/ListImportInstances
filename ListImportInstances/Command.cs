@@ -14,7 +14,8 @@ using System.IO;
 namespace ListImportInstances
 {
   /// <summary>
-  /// A generic interface to report imported data found in a specific project.  
+  /// A generic interface to report imported 
+  /// data found in a specific project.  
   /// </summary>
   interface IReportImportData
   {
@@ -47,7 +48,10 @@ namespace ListImportInstances
         m_projectFileName = "Default";
       }
 
-      m_logFileName = System.IO.Path.Combine( System.IO.Path.GetDirectoryName( m_projectFileName ), System.IO.Path.GetFileNameWithoutExtension( m_projectFileName ) ) + "-ListOfImportedData.txt";
+      m_logFileName = System.IO.Path.Combine( 
+        System.IO.Path.GetDirectoryName( m_projectFileName ), 
+        System.IO.Path.GetFileNameWithoutExtension( 
+          m_projectFileName ) ) + "-ListOfImportedData.txt";
 
       // Construct log file name from projectFileName 
       // and try to open file. Project file name is 
@@ -57,36 +61,50 @@ namespace ListImportInstances
       try
       {
         m_outputFile = new StreamWriter( m_logFileName );
-        m_outputFile.WriteLine( "List of imported CAD data in " + projectFileName );
+        m_outputFile.WriteLine( "List of imported CAD data in " 
+          + projectFileName );
         outcome = true;
       }
       catch( System.UnauthorizedAccessException )
       {
-        TaskDialog.Show( "FindImports", "You are not authorized to create " + m_logFileName );
+        TaskDialog.Show( "FindImports", 
+          "You are not authorized to create " 
+            + m_logFileName );
       }
       catch( System.ArgumentNullException ) // oh, come on.
       {
-        TaskDialog.Show( "FindImports", "That's just not fair. Null argument for StreamWriter()" );
+        TaskDialog.Show( "FindImports", 
+          "That's just not fair. Null argument for StreamWriter()" );
       }
       catch( System.ArgumentException )
       {
-        TaskDialog.Show( "FindImports", "Failed to create " + m_logFileName );
+        TaskDialog.Show( "FindImports", 
+          "Failed to create " + m_logFileName );
       }
       catch( System.IO.DirectoryNotFoundException )
       {
-        TaskDialog.Show( "FindImports", "That's not supposed to happen: directory not found: " + System.IO.Path.GetDirectoryName( m_projectFileName ) );
+        TaskDialog.Show( "FindImports", 
+          "That's not supposed to happen: directory not found: " 
+          + System.IO.Path.GetDirectoryName( m_projectFileName ) );
       }
       catch( System.IO.PathTooLongException )
       {
-        TaskDialog.Show( "FindImports", "The OS thinks the file name " + m_logFileName + " is too long" );
+        TaskDialog.Show( "FindImports", 
+          "The OS thinks the file name " + m_logFileName 
+          + " is too long" );
       }
       catch( System.IO.IOException )
       {
-        TaskDialog.Show( "FindImports", "An IO error has occurred while writing to " + m_logFileName );
+        TaskDialog.Show( "FindImports", 
+          "An IO error has occurred while writing to " 
+          + m_logFileName );
       }
       catch( System.Security.SecurityException )
       {
-        TaskDialog.Show( "FindImports", "The OS thinks your access rights to " + System.IO.Path.GetDirectoryName( m_projectFileName ) + " are insufficient" );
+        TaskDialog.Show( "FindImports", 
+          "The OS thinks your access rights to " 
+          + System.IO.Path.GetDirectoryName( m_projectFileName ) 
+          + " are insufficient" );
       }
       return outcome;
     }
@@ -125,14 +143,18 @@ namespace ListImportInstances
 
       if( m_warnUser )
       {
-        doneMsg = new TaskDialog( "Potential issues found. Please review the log file" );
+        doneMsg = new TaskDialog( 
+          "Potential issues found. Please review the log file" );
       }
       else
       {
-        doneMsg = new TaskDialog( "FindImports completed successfully" );
+        doneMsg = new TaskDialog( 
+          "FindImports completed successfully" );
       }
 
-      doneMsg.AddCommandLink( TaskDialogCommandLinkId.CommandLink1, "Review " + m_logFileName );
+      doneMsg.AddCommandLink( 
+        TaskDialogCommandLinkId.CommandLink1, 
+        "Review " + m_logFileName );
 
       switch( doneMsg.Show() )
       {
@@ -156,7 +178,8 @@ namespace ListImportInstances
       if( null != m_currentSection )
       {
         m_outputFile.WriteLine();
-        m_outputFile.WriteLine( "End of " + m_currentSection );
+        m_outputFile.WriteLine( "End of " 
+          + m_currentSection );
         m_outputFile.WriteLine();
       }
     }
@@ -165,7 +188,11 @@ namespace ListImportInstances
     private string m_logFileName;
     private StreamWriter m_outputFile;
     private string m_currentSection;
-    private bool m_warnUser; // tell the user to review the log file
+
+    /// <summary>
+    /// Tell the user to review the log file
+    /// </summary>
+    private bool m_warnUser; 
   }
 
   [Transaction( TransactionMode.ReadOnly )]
@@ -177,9 +204,14 @@ namespace ListImportInstances
         = new FilteredElementCollector( doc )
           .OfClass( typeof( ImportInstance ) );
 
-      NameValueCollection listOfViewSpecificImports = new NameValueCollection();
-      NameValueCollection listOfModelImports = new NameValueCollection();
-      NameValueCollection listOfUnidentifiedImports = new NameValueCollection();
+      NameValueCollection listOfViewSpecificImports 
+        = new NameValueCollection();
+
+      NameValueCollection listOfModelImports 
+        = new NameValueCollection();
+
+      NameValueCollection listOfUnidentifiedImports 
+        = new NameValueCollection();
 
       foreach( Element e in col )
       {
@@ -191,42 +223,55 @@ namespace ListImportInstances
 
           try
           {
-            Element viewElement = doc.GetElement( e.OwnerViewId );
+            Element viewElement = doc.GetElement( 
+              e.OwnerViewId );
             viewName = viewElement.Name;
           }
-          catch( Autodesk.Revit.Exceptions.ArgumentNullException ) // just in case
+          catch( Autodesk.Revit.Exceptions
+            .ArgumentNullException ) // just in case
           {
-            viewName = String.Concat( "Invalid View ID: ", e.OwnerViewId.ToString() );
+            viewName = String.Concat( 
+              "Invalid View ID: ", 
+              e.OwnerViewId.ToString() );
           }
 
           if( null != e.Category )
           {
-            listOfViewSpecificImports.Add( importCategoryNameToFileName( e.Category.Name ), viewName );
+            listOfViewSpecificImports.Add( 
+              importCategoryNameToFileName( 
+                e.Category.Name ), viewName );
           }
           else
           {
-            listOfUnidentifiedImports.Add( e.Id.ToString(), viewName );
+            listOfUnidentifiedImports.Add( 
+              e.Id.ToString(), viewName );
           }
         }
         else
         {
-          listOfModelImports.Add( importCategoryNameToFileName( e.Category.Name ), e.Name );
+          listOfModelImports.Add( 
+            importCategoryNameToFileName( 
+              e.Category.Name ), e.Name );
         }
       }
 
-      IReportImportData logOutput = new SimpleTextFileBasedReporter();
+      IReportImportData logOutput 
+        = new SimpleTextFileBasedReporter();
 
       if( !logOutput.init( doc.PathName ) )
       {
-        TaskDialog.Show( "FindImports", "Unable to create report file" );
+        TaskDialog.Show( "FindImports", 
+          "Unable to create report file" );
       }
       else
       {
         if( listOfViewSpecificImports.HasKeys() )
         {
-          logOutput.startReportSection( "View Specific Imports" );
+          logOutput.startReportSection( 
+            "View Specific Imports" );
 
-          listResults( listOfViewSpecificImports, logOutput );
+          listResults( listOfViewSpecificImports, 
+            logOutput );
         }
 
         if( listOfModelImports.HasKeys() )
@@ -237,23 +282,33 @@ namespace ListImportInstances
 
         if( listOfUnidentifiedImports.HasKeys() )
         {
-          logOutput.startReportSection( "Unknown import instances" );
-          listResults( listOfUnidentifiedImports, logOutput );
+          logOutput.startReportSection( 
+            "Unknown import instances" );
+          listResults( listOfUnidentifiedImports, 
+            logOutput );
         }
 
-        if( !sanityCheckViewSpecific( listOfViewSpecificImports, logOutput ) )
+        if( !sanityCheckViewSpecific( 
+          listOfViewSpecificImports, logOutput ) )
         {
           logOutput.setWarning();
-          //TaskDialog.Show("FindImportedData", "Possible issues found. Please review the log file");
+          //TaskDialog.Show("FindImportedData", 
+          //"Possible issues found. Please review the log file");
         }
 
         logOutput.done();
       }
     }
 
-    // This is an import category. It is created from a CAD file name, with appropriate (number) added.
-    // we want to use the file name as a key for our list of import instances, so strip off the brackets
-    private string importCategoryNameToFileName( string catName )
+    /// <summary>
+    /// This is an import category. It is created from 
+    /// a CAD file name, with appropriate (number) added. 
+    /// We want to use the file name as a key for our 
+    /// list of import instances, so strip off the 
+    /// brackets. 
+    /// </summary>
+    private string importCategoryNameToFileName( 
+      string catName )
     {
       string fileName = catName;
       fileName = fileName.Trim();
@@ -269,23 +324,32 @@ namespace ListImportInstances
       return fileName.Trim();
     }
 
-    private void listResults( NameValueCollection listOfImports, IReportImportData logFile )
+    private void listResults( 
+      NameValueCollection listOfImports, 
+      IReportImportData logFile )
     {
 
       foreach( String key in listOfImports.AllKeys )
       {
-        logFile.logItem( key + ": " + listOfImports.Get( key ) );
+        logFile.logItem( key + ": " 
+          + listOfImports.Get( key ) );
       }
     }
 
     /// <summary>
-    /// Run a few basic sanity checks on the list of view-specific imports. 
-    /// View-specific sanity is not the same as model sanity. Neither is necessarily sane.
-    /// True means possibly sane, false means probably not.
+    /// Run a few basic sanity checks on the list of 
+    /// view-specific imports. 
+    /// View-specific sanity is not the same as model 
+    /// sanity. Neither is necessarily sane.
+    /// True means possibly sane, false means probably 
+    /// not.
     /// </summary>
-    private bool sanityCheckViewSpecific( NameValueCollection listOfImports, IReportImportData logFile )
+    private bool sanityCheckViewSpecific( 
+      NameValueCollection listOfImports, 
+      IReportImportData logFile )
     {
-      logFile.startReportSection( "Sanity check report for view-specific imports" );
+      logFile.startReportSection( 
+        "Sanity check report for view-specific imports" );
 
       bool status = true;
       
@@ -296,7 +360,11 @@ namespace ListImportInstances
         string[] levels = listOfImports.GetValues( key );
         if( levels != null && levels.GetLength( 0 ) > 1 )
         {
-          logFile.logItem( "CAD data " + key + " appears to have been imported in Current View Only mode multiple times. It is present in views " + listOfImports.Get( key ) );
+          logFile.logItem( "CAD data " + key 
+            + " appears to have been imported in "
+            + "Current View Only mode multiple times. "
+            + "It is present in views " 
+            + listOfImports.Get( key ) );
           status = false;
         }
       }
@@ -310,7 +378,6 @@ namespace ListImportInstances
     {
       UIApplication uiapp = commandData.Application;
       UIDocument uidoc = uiapp.ActiveUIDocument;
-      //Application app = uiapp.Application;
       Document doc = uidoc.Document;
 
       listImports( doc );
